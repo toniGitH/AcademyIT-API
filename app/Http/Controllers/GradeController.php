@@ -135,4 +135,24 @@ class GradeController extends Controller
         return response()->json($grades);
     }
 
+    public function averageGradeByStudent($studentId)
+    {
+        $average = Grade::where('student_id', $studentId)
+                        ->whereNotNull('grade')
+                        ->avg('grade');
+    
+        if (is_null($average)) {
+            return response()->json([
+                'message' => 'No valid grades found for this student.'
+            ], 404);
+        }
+    
+        return response()->json([
+            'student_id' => $studentId,
+            'average_grade' => number_format($average, 2, '.', '')
+        ]);
+    }
+    
+
+
 }
