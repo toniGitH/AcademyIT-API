@@ -120,7 +120,7 @@ class GradeController extends Controller
         }
     }
 
-    public function getGradesByStudent($studentId)
+    public function getGradeListByStudent($studentId)
     {
         $grades = Grade::where('student_id', $studentId)->get();
 
@@ -133,7 +133,7 @@ class GradeController extends Controller
         return response()->json($grades);
     }
 
-    public function averageGradeByStudent($studentId)
+    public function getAverageGradeByStudent($studentId)
     {
         $average = Grade::where('student_id', $studentId)
                         ->whereNotNull('grade')
@@ -151,18 +151,12 @@ class GradeController extends Controller
         ]);
     }
 
-    public function overallAverageGrade()
+    public function getOverallAverageGrade()
     {
         $average = Grade::whereNotNull('grade')->avg('grade');
         return response()->json([
             'overall_average_grade' => number_format($average, 2, '.', '')
         ]);
     }
-
-    
-
-
-    
-
 
 }

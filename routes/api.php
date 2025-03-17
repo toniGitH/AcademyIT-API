@@ -29,12 +29,15 @@ Route::put('grades/{grade}', [GradeController::class, 'update']);
 Route::patch('grades/{grade}', [GradeController::class, 'update']);
 Route::delete('grades/{grade}', [GradeController::class, 'destroy']);
 
-// GRADES LIST BY STUDENT
-Route::get('/grades/student/{studentId}', [GradeController::class, 'getGradesByStudent']);
+// GRADE LIST BY STUDENT
+Route::get('/grades/student/{studentId}', [GradeController::class, 'getGradeListByStudent']);
 
 // AVERAGE GRADE BY STUDENT
-Route::get('/grades/student/{studentId}/average', [GradeController::class, 'averageGradeByStudent']);
+Route::get('/grades/student/{studentId}/average', [GradeController::class, 'getAverageGradeByStudent']);
 
 // AVERAGE OF ALL GRADES OF ALL STUDENTS
-Route::get('/overallAverageGrade', [GradeController::class, 'overallAverageGrade']);
+Route::get('/overallAverageGrade', [GradeController::class, 'getOverallAverageGrade']);
+
+// AVERAGE GRADE BY SUBJECT
+Route::get('/averageBySubject/{subject}', [SubjectController::class, 'getAverageGradeBySubject']);
 

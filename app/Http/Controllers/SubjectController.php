@@ -94,4 +94,13 @@ class SubjectController extends Controller
             ], 500);
         }
     }
+
+    public function getAverageGradeBySubject(Subject $subject)
+    {
+        $average = $subject->grades()->avg('grade');
+        
+        return response()->json([
+            'average_grade' => $average === null ? null : number_format($average, 2, '.', '')
+        ]);
+    }
 }
