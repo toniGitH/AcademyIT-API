@@ -29,3 +29,4 @@ Route::patch('grades/{grade}', [GradeController::class, 'update']);
 Route::delete('grades/{grade}', [GradeController::class, 'destroy']);
 
 
+Route::get('/grades/student/{studentId}', [GradeController::class, 'getGradesByStudent']);

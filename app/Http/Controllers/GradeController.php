@@ -121,4 +121,18 @@ class GradeController extends Controller
             ], 500);
         }
     }
+
+    public function getGradesByStudent($studentId)
+    {
+        $grades = Grade::where('student_id', $studentId)->get();
+
+        if ($grades->isEmpty()) {
+            return response()->json([
+                'message' => 'No grades found for this student.'
+            ], 404);
+        }
+
+        return response()->json($grades);
+    }
+
 }
