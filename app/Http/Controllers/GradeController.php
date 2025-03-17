@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grade;
-use App\Models\Student;
-use App\Models\Subject;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -152,6 +150,18 @@ class GradeController extends Controller
             'average_grade' => number_format($average, 2, '.', '')
         ]);
     }
+
+    public function overallAverageGrade()
+    {
+        $average = Grade::whereNotNull('grade')->avg('grade');
+        return response()->json([
+            'overall_average_grade' => number_format($average, 2, '.', '')
+        ]);
+    }
+
+    
+
+
     
 
 

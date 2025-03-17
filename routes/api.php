@@ -34,3 +34,7 @@ Route::get('/grades/student/{studentId}', [GradeController::class, 'getGradesByS
 
 // AVERAGE GRADE BY STUDENT
 Route::get('/grades/student/{studentId}/average', [GradeController::class, 'averageGradeByStudent']);
+
+// AVERAGE OF ALL GRADES OF ALL STUDENTS
+Route::get('/overallAverageGrade', [GradeController::class, 'overallAverageGrade']);
+
