@@ -99,8 +99,15 @@ class SubjectController extends Controller
     {
         $average = $subject->grades()->avg('grade');
         
+        if ($average === null) {
+            return response()->json([
+                'message' => 'No grades available to calculate subject average.'
+            ], 404);
+        }
+
         return response()->json([
-            'average_grade' => $average === null ? null : number_format($average, 2, '.', '')
+            'average_grade' => number_format($average, 2, '.', '')
         ]);
     }
+
 }
