@@ -167,4 +167,52 @@ class GradeApiTest extends TestCase
         $response->assertJson(['message' => 'Grade successfully deleted.']);
         $this->assertDatabaseMissing('grades', ['id' => $grade->id]);
     }
+
+    public function test_it_returns_grades_for_a_student()
+    {
+        // Crear un estudiante y asignaturas
+        $student = \App\Models\Student::factory()->create();
+        $subject1 = \App\Models\Subject::factory()->create();
+        $subject2 = \App\Models\Subject::factory()->create();
+
+        // Crear calificaciones para el estudiante
+        Grade::factory()->create([
+            'student_id' => $student->id,
+            'subject_id' => $subject1->id,
+            'grade' => 8,
+        ]);
+        Grade::factory()->create([
+            'student_id' => $student->id,
+            'subject_id' => $subject2->id,
+            'grade' => 7,
+        ]);
+
+        $response = $this->getJson('/api/grades/student/' . $student->id);
+
+        $response->assertStatus(200);
+
+        $response->assertJsonFragment([
+            'student_id' => $student->id,
+            'grade' => 8,
+        ]);
+        $response->assertJsonFragment([
+            'student_id' => $student->id,
+            'grade' => 7,
+        ]);
+    }
+
+    public function test_it_returns_404__for_a_student_without_grades()
+    {
+        $student = \App\Models\Student::factory()->create();
+
+        $response = $this->getJson('/api/grades/student/' . $student->id);
+
+        $response->assertStatus(404);
+
+        $response->assertJson([
+            'message' => 'No grades found for this student.'
+        ]);
+    }
+
+
 }
