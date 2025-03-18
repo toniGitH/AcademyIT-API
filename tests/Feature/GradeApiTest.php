@@ -214,5 +214,49 @@ class GradeApiTest extends TestCase
         ]);
     }
 
+    public function test_it_returns_average_grade_for_a_student()
+    {
+        $student = \App\Models\Student::factory()->create();
+        $subject1 = \App\Models\Subject::factory()->create();
+        $subject2 = \App\Models\Subject::factory()->create();
+    
+        Grade::factory()->create([
+            'student_id' => $student->id,
+            'subject_id' => $subject1->id,
+            'grade' => 8,
+        ]);
+        Grade::factory()->create([
+            'student_id' => $student->id,
+            'subject_id' => $subject2->id,
+            'grade' => 7,
+        ]);
+    
+        $response = $this->getJson('/api/grades/student/' . $student->id . '/average');
+    
+        $response->assertStatus(200);
+    
+        $response->assertJsonFragment([
+            'student_id' => (string) $student->id,
+            'average_grade' => '7.50',
+        ]);
+    }
+
+    public function test_it_returns_message_when_no_grades_for_student()
+    {
+        $student = \App\Models\Student::factory()->create();
+    
+        $response = $this->getJson('/api/grades/student/' . $student->id . '/average');
+    
+        $response->assertStatus(404);
+    
+        $response->assertJson([
+            'message' => 'No valid grades found for this student.'
+        ]);
+    }
+    
+
+    
+    
+
 
 }
