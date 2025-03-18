@@ -153,7 +153,16 @@ class GradeController extends Controller
 
     public function getOverallAverageGrade()
     {
-        $average = Grade::whereNotNull('grade')->avg('grade');
+        $grades = Grade::all();
+        
+        if ($grades->isEmpty() || $grades->whereNotNull('grade')->isEmpty()) {
+            return response()->json([
+                'message' => 'No grades available to calculate overall average.'
+            ], 404);
+        }
+        
+        $average = $grades->whereNotNull('grade')->avg('grade');
+        
         return response()->json([
             'overall_average_grade' => number_format($average, 2, '.', '')
         ]);

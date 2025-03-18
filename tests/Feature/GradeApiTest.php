@@ -44,7 +44,6 @@ class GradeApiTest extends TestCase
     {
         $student = Student::factory()->create();
         $subject = Subject::factory()->create();
-        
         Grade::create([
             'student_id' => $student->id,
             'subject_id' => $subject->id,
@@ -107,8 +106,8 @@ class GradeApiTest extends TestCase
 
     public function test_it_can_update_to_an_existing_grade_for_the_same_student_and_subject()
     {
-        $student = \App\Models\Student::factory()->create();
-        $subject = \App\Models\Subject::factory()->create();
+        $student = Student::factory()->create();
+        $subject = Subject::factory()->create();
         
         $existingGrade = Grade::factory()->create([
             'student_id' => $student->id,
@@ -117,7 +116,7 @@ class GradeApiTest extends TestCase
         ]);
         
         $response = $this->putJson('/api/grades/' . $existingGrade->id, [
-            'grade' => 7, // La misma calificación
+            'grade' => 7,
         ]);
         
         $response->assertStatus(200);
@@ -133,8 +132,8 @@ class GradeApiTest extends TestCase
     
     public function test_it_can_update_to_a_different_grade_for_the_same_student_and_subject()
     {
-        $student = \App\Models\Student::factory()->create();
-        $subject = \App\Models\Subject::factory()->create();
+        $student = Student::factory()->create();
+        $subject = Subject::factory()->create();
         
         $existingGrade = Grade::factory()->create([
             'student_id' => $student->id,
@@ -170,12 +169,10 @@ class GradeApiTest extends TestCase
 
     public function test_it_returns_grades_for_a_student()
     {
-        // Crear un estudiante y asignaturas
-        $student = \App\Models\Student::factory()->create();
-        $subject1 = \App\Models\Subject::factory()->create();
-        $subject2 = \App\Models\Subject::factory()->create();
+        $student = Student::factory()->create();
+        $subject1 = Subject::factory()->create();
+        $subject2 = Subject::factory()->create();
 
-        // Crear calificaciones para el estudiante
         Grade::factory()->create([
             'student_id' => $student->id,
             'subject_id' => $subject1->id,
@@ -203,7 +200,7 @@ class GradeApiTest extends TestCase
 
     public function test_it_returns_404__for_a_student_without_grades()
     {
-        $student = \App\Models\Student::factory()->create();
+        $student = Student::factory()->create();
 
         $response = $this->getJson('/api/grades/student/' . $student->id);
 
@@ -216,9 +213,9 @@ class GradeApiTest extends TestCase
 
     public function test_it_returns_average_grade_for_a_student()
     {
-        $student = \App\Models\Student::factory()->create();
-        $subject1 = \App\Models\Subject::factory()->create();
-        $subject2 = \App\Models\Subject::factory()->create();
+        $student = Student::factory()->create();
+        $subject1 = Subject::factory()->create();
+        $subject2 = Subject::factory()->create();
     
         Grade::factory()->create([
             'student_id' => $student->id,
@@ -241,9 +238,9 @@ class GradeApiTest extends TestCase
         ]);
     }
 
-    public function test_it_returns_message_when_no_grades_for_student()
+    public function test_it_returns_404_when_no_grades_for_student()
     {
-        $student = \App\Models\Student::factory()->create();
+        $student = Student::factory()->create();
     
         $response = $this->getJson('/api/grades/student/' . $student->id . '/average');
     
@@ -253,6 +250,48 @@ class GradeApiTest extends TestCase
             'message' => 'No valid grades found for this student.'
         ]);
     }
+
+    public function test_it_returns_overall_average_grade_when_grades_exist()
+    {
+        $student1 = Student::factory()->create();
+        $student2 = Student::factory()->create();
+        Grade::factory()->create([
+            'student_id' => $student1->id,
+            'grade' => 8,
+        ]);
+        
+        Grade::factory()->create([
+            'student_id' => $student2->id,
+            'grade' => 7,
+        ]);
+    
+        $response = $this->getJson('api/overallAverageGrade');
+    
+        $response->assertStatus(200);
+    
+        $expectedAverage = number_format((8 + 7) / 2, 2, '.', '');
+    
+        $response->assertJsonFragment([
+            'overall_average_grade' => $expectedAverage
+        ]);
+    }
+
+    public function test_it_returns_404_when_no_grades_exist()
+    {
+        Grade::truncate();
+
+        $response = $this->getJson('api/overallAverageGrade');
+
+        $response->assertStatus(404);
+
+        $response->assertJson([
+            'message' => 'No grades available to calculate overall average.'
+        ]);
+    }
+
+    
+    
+
     
 
     
