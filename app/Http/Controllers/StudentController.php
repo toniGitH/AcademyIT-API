@@ -11,7 +11,10 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $students = Student::all();
+        $students = Student::orderBy('last_name_1', 'asc')
+        ->orderBy('last_name_2', 'asc')
+        ->orderBy('first_name', 'asc')
+        ->get();
         return response()->json($students);
     }
 

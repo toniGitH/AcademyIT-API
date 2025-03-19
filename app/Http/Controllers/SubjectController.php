@@ -11,8 +11,17 @@ class SubjectController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::all();
-        return response()->json($subjects);
+        $subjects = Subject::orderBy('name', 'asc')
+        ->orderByRaw("CASE 
+                        WHEN course_level = '1r' THEN 1
+                        WHEN course_level = '2n' THEN 2
+                        WHEN course_level = '3r' THEN 3
+                        WHEN course_level = '4t' THEN 4
+                        ELSE 5 
+                      END")
+        ->get();
+    
+        return response()->json($subjects);Subject::orderBy('name', 'asc')->orderByRaw("FIELD(course_level, '1r', '2n', '4r', '4t')");
     }
 
     public function store(Request $request)
